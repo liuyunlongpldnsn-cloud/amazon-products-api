@@ -1,0 +1,17 @@
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# logs
+logs/
+*.log
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# mac
+.DS_Store
