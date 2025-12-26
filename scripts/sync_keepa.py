@@ -4,9 +4,9 @@ Sync products from Keepa into PostgreSQL.
 
 Writes into:
 - platforms
-- products
+- products (snapshot)
 - prices (append-only)
-- ratings (append-only)
+- ratings (append-only, MVP: current snapshot point if available)
 - sales_rank_history (append-only)
 
 Run (from project root):
@@ -20,6 +20,7 @@ Env:
 """
 
 import os
+import time
 import argparse
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, timezone, timedelta
@@ -29,18 +30,17 @@ from app.db import get_engine
 from app.keepa_client import KeepaClient
 
 
-# ----------------------------
-# keepa helpers
-# ----------------------------
-
 KEEPA_BASE = datetime(2011, 1, 1, tzinfo=timezone.utc)
+
 
 def keepa_minutes_to_ts(minute: int) -> datetime:
     return KEEPA_BASE + timedelta(minutes=int(minute))
 
+
 def keepa_price_to_float(v: Any) -> Optional[float]:
     """
-    Keepa price often in cents; <=0 means no data.
+    Keepa price is often in cents.
+    <=0 (e.g. -1, -2) means no data -> None
     """
     try:
         if v is None:
@@ -53,10 +53,6 @@ def keepa_price_to_float(v: Any) -> Optional[float]:
         return None
 
 
-# ----------------------------
-# file utils
-# ----------------------------
-
 def read_asins(path: str) -> List[str]:
     out: List[str] = []
     with open(path, "r", encoding="utf-8") as f:
@@ -66,23 +62,21 @@ def read_asins(path: str) -> List[str]:
                 out.append(s)
     return out
 
+
 def chunk(lst: List[str], n: int):
     for i in range(0, len(lst), n):
-        yield lst[i:i+n]
+        yield lst[i : i + n]
 
-
-# ----------------------------
-# parse keepa product
-# ----------------------------
 
 def get_snapshot_fields(p: Dict[str, Any]) -> Dict[str, Any]:
     asin = p.get("asin") or None
     title = p.get("title") or None
 
-    # Keepa url may be missing; fallback dp link
     product_url = p.get("url") or (f"https://www.amazon.com/dp/{asin}" if asin else None)
 
-    image = p.get("image") or None
+    # Keepa image field sometimes missing; keep whatever exists
+    image_url = p.get("image") or None
+
     brand = p.get("brand") or None
 
     category = None
@@ -92,7 +86,15 @@ def get_snapshot_fields(p: Dict[str, Any]) -> Dict[str, Any]:
         if isinstance(last, dict):
             category = last.get("name") or None
 
+    # monthlySold is present in your Keepa payload keys
+    monthly_sold = p.get("monthlySold")
+    try:
+        monthly_sold = int(monthly_sold) if monthly_sold is not None else None
+    except Exception:
+        monthly_sold = None
+
     stats = p.get("stats") or {}
+    # rating/reviewCount in your current payload is often missing -> keep None
     review_count = stats.get("reviewCount") or stats.get("reviewsCount")
     try:
         review_count = int(review_count) if review_count is not None else None
@@ -107,28 +109,32 @@ def get_snapshot_fields(p: Dict[str, Any]) -> Dict[str, Any]:
 
     buybox_price = keepa_price_to_float(stats.get("buyBoxPrice") or stats.get("buyboxPrice"))
 
-    # current price snapshot from csv[0] last value
-    price = None
-    csv = p.get("csv")
-    if isinstance(csv, list) and csv and isinstance(csv[0], list) and len(csv[0]) >= 2:
-        price = keepa_price_to_float(csv[0][-1])
+    # IMPORTANT: current "price" snapshot uses buybox first; fallback to csv[0] last
+    price = buybox_price
+    if price is None:
+        csv = p.get("csv")
+        if isinstance(csv, list) and csv and isinstance(csv[0], list) and len(csv[0]) >= 2:
+            price = keepa_price_to_float(csv[0][-1])
 
     return {
         "asin": asin,
         "title": title,
         "product_url": product_url,
-        "image_url": image,
+        "image_url": image_url,
         "brand": brand,
         "category": category,
         "review_count": review_count,
         "review_rating": review_rating,
         "buybox_price": buybox_price,
         "price": price,
+        "monthly_sold": monthly_sold,
     }
+
 
 def parse_price_points(p: Dict[str, Any]) -> List[Tuple[datetime, Optional[float]]]:
     """
     Use csv[0] as Amazon price series (minute, price_cents) pairs.
+    Keep None for <=0; we still insert rows (ts) but with price NULL.
     """
     out: List[Tuple[datetime, Optional[float]]] = []
     csv = p.get("csv")
@@ -145,9 +151,11 @@ def parse_price_points(p: Dict[str, Any]) -> List[Tuple[datetime, Optional[float
             continue
     return out
 
+
 def parse_rating_point(p: Dict[str, Any]) -> Optional[Tuple[datetime, Optional[float], Optional[int]]]:
     """
-    Keepa rating time-series不是每个商品都稳定；MVP 先写一个“当前快照点”。
+    MVP: write a current snapshot point if Keepa provides it.
+    In your current payload, it is often missing -> None.
     """
     stats = p.get("stats") or {}
     rating = stats.get("rating") or stats.get("reviewRating")
@@ -168,10 +176,11 @@ def parse_rating_point(p: Dict[str, Any]) -> Optional[Tuple[datetime, Optional[f
 
     return (datetime.now(tz=timezone.utc), rating, review_count)
 
+
 def parse_rank_points(p: Dict[str, Any]) -> List[Tuple[datetime, int, str]]:
     """
     salesRanks: dict(categoryId -> [minute, rank, minute, rank...])
-    取第一条序列写入 sales_rank_history（category 用 key 字符串）。
+    Take the first series (MVP).
     """
     out: List[Tuple[datetime, int, str]] = []
     sr = p.get("salesRanks")
@@ -199,7 +208,7 @@ def parse_rank_points(p: Dict[str, Any]) -> List[Tuple[datetime, int, str]]:
 
 
 # ----------------------------
-# DB write helpers (no app.repo dependency)
+# DB write helpers
 # ----------------------------
 
 def ensure_platform(conn, platform_name: str) -> int:
@@ -207,45 +216,68 @@ def ensure_platform(conn, platform_name: str) -> int:
         text("INSERT INTO platforms(name) VALUES(:name) ON CONFLICT(name) DO NOTHING"),
         {"name": platform_name},
     )
-    pid = conn.execute(
-        text("SELECT id FROM platforms WHERE name = :name"),
-        {"name": platform_name},
-    ).scalar_one()
+    pid = conn.execute(text("SELECT id FROM platforms WHERE name=:name"), {"name": platform_name}).scalar_one()
     return int(pid)
+
 
 def upsert_product(conn, platform_id: int, snap: Dict[str, Any]) -> int:
     """
-    products unique is (platform_id, asin) in your DB.
-    Upsert and return products.id
+    Upsert by (platform_id, asin) and return products.id
     """
     sql = """
-    INSERT INTO products (platform_id, asin, title, brand, image_url, product_url, category, review_count, review_rating, buybox_price, price, updated_at)
-    VALUES (:platform_id, :asin, :title, :brand, :image_url, :product_url, :category, :review_count, :review_rating, :buybox_price, :price, NOW())
+    INSERT INTO products (
+      platform_id, asin,
+      title, brand, category,
+      image_url, product_url,
+      review_count, review_rating,
+      buybox_price, price,
+      monthly_sold,
+      updated_at
+    )
+    VALUES (
+      :platform_id, :asin,
+      :title, :brand, :category,
+      :image_url, :product_url,
+      :review_count, :review_rating,
+      :buybox_price, :price,
+      :monthly_sold,
+      NOW()
+    )
     ON CONFLICT (platform_id, asin)
     DO UPDATE SET
       title = EXCLUDED.title,
       brand = EXCLUDED.brand,
+      category = EXCLUDED.category,
       image_url = EXCLUDED.image_url,
       product_url = EXCLUDED.product_url,
-      category = EXCLUDED.category,
       review_count = EXCLUDED.review_count,
       review_rating = EXCLUDED.review_rating,
       buybox_price = EXCLUDED.buybox_price,
       price = EXCLUDED.price,
+      monthly_sold = EXCLUDED.monthly_sold,
       updated_at = NOW()
     RETURNING id
     """
     pid = conn.execute(text(sql), {"platform_id": platform_id, **snap}).scalar_one()
     return int(pid)
 
-def insert_prices(conn, product_id: int, points: List[Tuple[datetime, Optional[float]]], buybox_price: Optional[float]) -> int:
+
+def insert_prices(
+    conn,
+    product_id: int,
+    points: List[Tuple[datetime, Optional[float]]],
+    buybox_price: Optional[float],
+) -> Tuple[int, int]:
     """
-    Append into prices(product_id, ts, price, buybox_price, currency)
-    Unique constraint should be (product_id, ts) in your schema.
+    Append into prices(product_id, ts, price, buybox_price)
+    Requires UNIQUE index on (product_id, ts)
+    Returns (added, skipped)
     """
     if not points:
-        return 0
+        return (0, 0)
+
     added = 0
+    skipped = 0
     sql = """
     INSERT INTO prices (product_id, ts, price, buybox_price)
     VALUES (:product_id, :ts, :price, :buybox_price)
@@ -253,17 +285,15 @@ def insert_prices(conn, product_id: int, points: List[Tuple[datetime, Optional[f
     """
     for ts, price in points:
         r = conn.execute(text(sql), {"product_id": product_id, "ts": ts, "price": price, "buybox_price": buybox_price})
-        # rowcount is 1 if inserted, 0 if conflict
-        try:
-            added += int(r.rowcount or 0)
-        except Exception:
-            pass
-    return added
+        rc = int(getattr(r, "rowcount", 0) or 0)
+        if rc == 1:
+            added += 1
+        else:
+            skipped += 1
+    return (added, skipped)
+
 
 def insert_ratings(conn, product_id: int, point: Optional[Tuple[datetime, Optional[float], Optional[int]]]) -> int:
-    """
-    Append into ratings(product_id, ts, rating, review_count)
-    """
     if not point:
         return 0
     ts, rating, review_count = point
@@ -273,19 +303,15 @@ def insert_ratings(conn, product_id: int, point: Optional[Tuple[datetime, Option
     ON CONFLICT (product_id, ts) DO NOTHING
     """
     r = conn.execute(text(sql), {"product_id": product_id, "ts": ts, "rating": rating, "review_count": review_count})
-    try:
-        return int(r.rowcount or 0)
-    except Exception:
-        return 0
+    return int(getattr(r, "rowcount", 0) or 0)
 
-def insert_ranks(conn, product_id: int, points: List[Tuple[datetime, int, str]]) -> int:
-    """
-    Append into sales_rank_history(product_id, ts, rank, category)
-    Unique constraint is typically (product_id, ts, category) (you后面已修复 schema.sql)
-    """
+
+def insert_ranks(conn, product_id: int, points: List[Tuple[datetime, int, str]]) -> Tuple[int, int]:
     if not points:
-        return 0
+        return (0, 0)
+
     added = 0
+    skipped = 0
     sql = """
     INSERT INTO sales_rank_history (product_id, ts, rank, category)
     VALUES (:product_id, :ts, :rank, :category)
@@ -293,23 +319,32 @@ def insert_ranks(conn, product_id: int, points: List[Tuple[datetime, int, str]])
     """
     for ts, rank, category in points:
         r = conn.execute(text(sql), {"product_id": product_id, "ts": ts, "rank": rank, "category": category})
+        rc = int(getattr(r, "rowcount", 0) or 0)
+        if rc == 1:
+            added += 1
+        else:
+            skipped += 1
+    return (added, skipped)
+
+
+def fetch_products_with_retry(client: KeepaClient, asins: List[str], stats: int, buybox: int, retries: int = 3) -> Dict[str, Any]:
+    last_err: Optional[Exception] = None
+    for attempt in range(1, retries + 1):
         try:
-            added += int(r.rowcount or 0)
-        except Exception:
-            pass
-    return added
+            return client.fetch_products(asins, stats=stats, buybox=buybox)
+        except Exception as e:
+            last_err = e
+            time.sleep(0.8 * attempt)
+    raise last_err  # type: ignore[misc]
 
-
-# ----------------------------
-# main
-# ----------------------------
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--asins-file", required=True)
     ap.add_argument("--batch", type=int, default=20)
-    ap.add_argument("--stats", type=int, default=1)
+    ap.add_argument("--stats", type=int, default=180)  # 建议用 180
     ap.add_argument("--buybox", type=int, default=1)
+    ap.add_argument("--retries", type=int, default=3)
     args = ap.parse_args()
 
     asins = read_asins(args.asins_file)
@@ -323,11 +358,13 @@ def main():
 
     products_ok = 0
     prices_added = 0
+    prices_skipped = 0
     ratings_added = 0
     ranks_added = 0
+    ranks_skipped = 0
 
     for group in chunk(asins, args.batch):
-        payload = client.fetch_products(group, stats=args.stats, buybox=args.buybox)
+        payload = fetch_products_with_retry(client, group, stats=args.stats, buybox=args.buybox, retries=args.retries)
         products = payload.get("products") or payload.get("Products") or []
         if not isinstance(products, list):
             continue
@@ -343,24 +380,31 @@ def main():
 
                 product_id = upsert_product(conn, platform_id, snap)
 
-                # append histories
+                # histories
                 buybox = snap.get("buybox_price")
 
                 ph = parse_price_points(p)
-                prices_added += insert_prices(conn, product_id, ph, buybox)
+                a, s = insert_prices(conn, product_id, ph, buybox)
+                prices_added += a
+                prices_skipped += s
 
                 rp = parse_rating_point(p)
                 ratings_added += insert_ratings(conn, product_id, rp)
 
                 rk = parse_rank_points(p)
-                ranks_added += insert_ranks(conn, product_id, rk)
+                a2, s2 = insert_ranks(conn, product_id, rk)
+                ranks_added += a2
+                ranks_skipped += s2
 
                 products_ok += 1
 
     print(
         f"OK sync_keepa: products={products_ok} "
-        f"prices_added={prices_added} ratings_added={ratings_added} ranks_added={ranks_added}"
+        f"prices_added={prices_added} prices_skipped={prices_skipped} "
+        f"ratings_added={ratings_added} "
+        f"ranks_added={ranks_added} ranks_skipped={ranks_skipped}"
     )
+
 
 if __name__ == "__main__":
     main()
