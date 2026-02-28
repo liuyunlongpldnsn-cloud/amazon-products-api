@@ -1,0 +1,71 @@
+{
+  "query": "wireless earbuds",
+  "generated_at": "2026-02-28T16:18:12.793769+00:00",
+  "count": 3,
+  "items": [
+    {
+      "rank": 1,
+      "product_name": "Wireless Cancelling Charging Bluetooth Headphones",
+      "brand": "Wireless",
+      "price": 22.99,
+      "url": "https://www.amazon.com/dp/B0G3N8YRQ7",
+      "rating": 4.9,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Wireless",
+        "Long battery life"
+      ],
+      "score_total": 50.15,
+      "score_breakdown": {
+        "price_score": 90.42,
+        "review_score": 0.0,
+        "spec_score": 74.0
+      },
+      "recommendation_reason": "Wireless Cancelling Charging Bluetooth Headphones ranked #1 in this query and reached a total score of 50.15. It is from Wireless and currently priced at $22.99. The model favors it mainly on price_score=90.42, review_score=0.0, and spec_score=74.0. It has a visible rating of 4.9/5, which supports baseline product quality. Key strengths include: ANC, Bluetooth, Wireless, Long battery life."
+    },
+    {
+      "rank": 2,
+      "product_name": "Bluetooth Headphones Cancelling Waterproof Earphones",
+      "brand": "Bluetooth",
+      "price": 19.83,
+      "url": "https://www.amazon.com/dp/B0FH911KS1",
+      "rating": 4.5,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Waterproof"
+      ],
+      "score_total": 47.13,
+      "score_breakdown": {
+        "price_score": 92.51,
+        "review_score": 0.0,
+        "spec_score": 59.0
+      },
+      "recommendation_reason": "Bluetooth Headphones Cancelling Waterproof Earphones ranked #2 in this query and reached a total score of 47.13. It is from Bluetooth and currently priced at $19.83. The model favors it mainly on price_score=92.51, review_score=0.0, and spec_score=59.0. It has a visible rating of 4.5/5, which supports baseline product quality. Key strengths include: ANC, Bluetooth, Waterproof."
+    },
+    {
+      "rank": 3,
+      "product_name": "Soundcore Cancelling Powerful Playtime Bluetooth",
+      "brand": "Soundcore",
+      "price": 24.99,
+      "url": "https://www.amazon.com/dp/B0CRTYZG5C",
+      "rating": 4.4,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Long battery life"
+      ],
+      "score_total": 46.19,
+      "score_breakdown": {
+        "price_score": 89.1,
+        "review_score": 0.0,
+        "spec_score": 60.0
+      },
+      "recommendation_reason": "Soundcore Cancelling Powerful Playtime Bluetooth ranked #3 in this query and reached a total score of 46.19. It is from Soundcore and currently priced at $24.99. The model favors it mainly on price_score=89.1, review_score=0.0, and spec_score=60.0. It has a visible rating of 4.4/5, which supports baseline product quality. Key strengths include: ANC, Bluetooth, Long battery life."
+    }
+  ]
+}

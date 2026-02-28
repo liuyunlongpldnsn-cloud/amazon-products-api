@@ -1,0 +1,418 @@
+{
+  "query": "wireless earbuds",
+  "scored_at": "2026-02-28T16:18:12.767664+00:00",
+  "weights": {
+    "price_score": 0.35,
+    "review_score": 0.4,
+    "spec_score": 0.25
+  },
+  "count": 20,
+  "items": [
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Wireless Cancelling Charging Bluetooth Headphones",
+      "brand": "Wireless",
+      "price": 22.99,
+      "url": "https://www.amazon.com/dp/B0G3N8YRQ7",
+      "rating": 4.9,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Wireless",
+        "Long battery life"
+      ],
+      "score_breakdown": {
+        "price_score": 90.42,
+        "review_score": 0.0,
+        "spec_score": 74.0
+      },
+      "score_total": 50.15
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Bluetooth Headphones Cancelling Waterproof Earphones",
+      "brand": "Bluetooth",
+      "price": 19.83,
+      "url": "https://www.amazon.com/dp/B0FH911KS1",
+      "rating": 4.5,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Waterproof"
+      ],
+      "score_breakdown": {
+        "price_score": 92.51,
+        "review_score": 0.0,
+        "spec_score": 59.0
+      },
+      "score_total": 47.13
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Soundcore Cancelling Powerful Playtime Bluetooth",
+      "brand": "Soundcore",
+      "price": 24.99,
+      "url": "https://www.amazon.com/dp/B0CRTYZG5C",
+      "rating": 4.4,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Long battery life"
+      ],
+      "score_breakdown": {
+        "price_score": 89.1,
+        "review_score": 0.0,
+        "spec_score": 60.0
+      },
+      "score_total": 46.19
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Soundcore Cancelling Powerful Playtime Bluetooth",
+      "brand": "Soundcore",
+      "price": 24.99,
+      "url": "https://www.amazon.com/dp/B0CRTR3PMF",
+      "rating": 4.4,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth",
+        "Long battery life"
+      ],
+      "score_breakdown": {
+        "price_score": 89.1,
+        "review_score": 0.0,
+        "spec_score": 60.0
+      },
+      "score_total": 46.19
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Bluetooth Headphones Wireless Waterproof Earphones",
+      "brand": "Bluetooth",
+      "price": 24.66,
+      "url": "https://www.amazon.com/dp/B0C3W4MNN1",
+      "rating": 4.4,
+      "review_count": null,
+      "key_specs": [
+        "Bluetooth",
+        "Waterproof",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 89.32,
+        "review_score": 0.0,
+        "spec_score": 49.0
+      },
+      "score_total": 43.51
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "kurdene Bluetooth Light Weight Headphones Earphones",
+      "brand": "Kurdene",
+      "price": 8.48,
+      "url": "https://www.amazon.com/dp/B0D635YLCT",
+      "rating": 4.3,
+      "review_count": null,
+      "key_specs": [
+        "Bluetooth",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 100.0,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 42.0
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "AsiceSound Wireless Earbuds Bluetooth Headphones",
+      "brand": "Asicesound",
+      "price": 9.49,
+      "url": "https://www.amazon.com/dp/B0G2MRJYZ8",
+      "rating": 4.8,
+      "review_count": null,
+      "key_specs": [
+        "Bluetooth",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 99.33,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 41.77
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": null,
+      "brand": null,
+      "price": 13.99,
+      "url": "https://www.amazon.com/dp/B09FT58QQP",
+      "rating": 4.3,
+      "review_count": null,
+      "key_specs": [
+        "Wireless",
+        "Bluetooth"
+      ],
+      "score_breakdown": {
+        "price_score": 96.36,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 40.73
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Apple EarPods Headphones Lightning Connector",
+      "brand": "Apple",
+      "price": 15.96,
+      "url": "https://www.amazon.com/dp/B0D7FVQ1ZB",
+      "rating": 4.6,
+      "review_count": null,
+      "key_specs": [
+        "Wireless",
+        "Bluetooth"
+      ],
+      "score_breakdown": {
+        "price_score": 95.06,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 40.27
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "TAGRY Bluetooth Headphones Earphones Waterproof",
+      "brand": "Tagry",
+      "price": 24.68,
+      "url": "https://www.amazon.com/dp/B09DT48V16",
+      "rating": 4.4,
+      "review_count": null,
+      "key_specs": [
+        "Bluetooth",
+        "Waterproof"
+      ],
+      "score_breakdown": {
+        "price_score": 89.31,
+        "review_score": 0.0,
+        "spec_score": 35.0
+      },
+      "score_total": 40.01
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JLab Wireless Bluetooth Connection Signature",
+      "brand": "Jlab",
+      "price": 17.49,
+      "url": "https://www.amazon.com/dp/B0CXG87GYK",
+      "rating": 4.4,
+      "review_count": null,
+      "key_specs": [
+        "Bluetooth",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 94.05,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 39.92
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "Bluetooth Multifunctional Headphones Cancelling Transparency",
+      "brand": "Bluetooth",
+      "price": 34.99,
+      "url": "https://www.amazon.com/dp/B0FR4Q1GVH",
+      "rating": 4.8,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Bluetooth"
+      ],
+      "score_breakdown": {
+        "price_score": 82.5,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 38.38
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JBL Vibe Beam Cancelling Technology",
+      "brand": "Jbl",
+      "price": 39.95,
+      "url": "https://www.amazon.com/dp/B0DN45YMP6",
+      "rating": 4.2,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 79.23,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 37.23
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JBL Tune Buds Wireless Cancelling",
+      "brand": "Jbl",
+      "price": 39.95,
+      "url": "https://www.amazon.com/dp/B0C1QDNP2G",
+      "rating": 4.1,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 79.23,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 37.23
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JBL Tune Flex Wireless Cancelling",
+      "brand": "Jbl",
+      "price": 39.95,
+      "url": "https://www.amazon.com/dp/B0C1QNRGHC",
+      "rating": 4.0,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 79.23,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 37.23
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JBL Vibe Beam Wireless Headphones",
+      "brand": "Jbl",
+      "price": 29.95,
+      "url": "https://www.amazon.com/dp/B0BQPNMXQV",
+      "rating": 4.2,
+      "review_count": null,
+      "key_specs": [
+        "Wireless",
+        "Bluetooth"
+      ],
+      "score_breakdown": {
+        "price_score": 85.83,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 37.04
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JBL Vibe Buds Wireless Headphones",
+      "brand": "Jbl",
+      "price": 34.95,
+      "url": "https://www.amazon.com/dp/B0BQPZ7DMV",
+      "rating": 4.2,
+      "review_count": null,
+      "key_specs": [
+        "Wireless",
+        "Bluetooth"
+      ],
+      "score_breakdown": {
+        "price_score": 82.53,
+        "review_score": 0.0,
+        "spec_score": 28.0
+      },
+      "score_total": 35.89
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JBL Endurance Peak Wireless Headphones",
+      "brand": "Jbl",
+      "price": 69.95,
+      "url": "https://www.amazon.com/dp/B0BQPW9R9H",
+      "rating": 4.0,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 59.43,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 30.3
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "JGUG Cancelling Headphones Multifuntional Touchscreen",
+      "brand": "Jgug",
+      "price": 159.99,
+      "url": "https://www.amazon.com/dp/B0FXMMR6D5",
+      "rating": null,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Touch controls"
+      ],
+      "score_breakdown": {
+        "price_score": 0.0,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 9.5
+    },
+    {
+      "query": "wireless earbuds",
+      "source": "amazon",
+      "title": "SAMSUNG Cancelling Optimization Interpreter Redesigned",
+      "brand": "Samsung",
+      "price": 159.99,
+      "url": "https://www.amazon.com/dp/B0D9YZJ3V7",
+      "rating": 4.2,
+      "review_count": null,
+      "key_specs": [
+        "ANC",
+        "Wireless"
+      ],
+      "score_breakdown": {
+        "price_score": 0.0,
+        "review_score": 0.0,
+        "spec_score": 38.0
+      },
+      "score_total": 9.5
+    }
+  ]
+}

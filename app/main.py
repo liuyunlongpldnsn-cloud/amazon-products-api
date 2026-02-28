@@ -1,10 +1,16 @@
 import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 from typing import Optional
 
 from .db import get_engine
 from .repo import list_products, get_product_by_asin, get_product_history
+from src.clean import clean
+from src.collect import collect
+from src.recommend import run as recommend_run
+from src.scoring import run as score_run
 
 app = FastAPI(title="Amazon Products API", version="2.2")
 
@@ -63,3 +69,40 @@ def product_history(
 @app.get("/health")
 def health():
     return {"ok": True}
+
+
+@app.get("/recommend")
+def recommend(
+    query: str = Query(..., min_length=2),
+    limit: int = Query(20, ge=1, le=100),
+    top: int = Query(3, ge=1, le=20),
+):
+    base_dir = Path(__file__).resolve().parents[1]
+    source_file = base_dir / "data" / "real_products.csv"
+    if not source_file.exists():
+        raise HTTPException(status_code=500, detail="Source dataset not found")
+
+    with TemporaryDirectory(prefix="earbuds_pipeline_") as tmp:
+        tmpdir = Path(tmp)
+        raw_file = tmpdir / "raw.json"
+        clean_file = tmpdir / "clean.json"
+        scored_file = tmpdir / "scored.json"
+        out_json = tmpdir / "top3.json"
+        out_md = tmpdir / "top3.md"
+        report_file = tmpdir / "quality_report.txt"
+
+        collect(
+            query=query,
+            limit=limit,
+            source_file=source_file,
+            output_file=raw_file,
+        )
+        clean(raw_path=raw_file, clean_path=clean_file, report_path=report_file)
+        score_run(input_path=clean_file, output_path=scored_file)
+        result = recommend_run(
+            input_path=scored_file,
+            output_json=out_json,
+            output_md=out_md,
+            top_n=top,
+        )
+    return result

@@ -1,0 +1,11 @@
+Earbuds Data Quality Report
+Generated at: 2026-02-28T16:18:12.740305+00:00
+
+Total records: 20
+Valid price ratio: 20/20 (100.00%)
+Valid rating ratio: 19/20 (95.00%)
+
+Top 3 missing fields:
+- review_count: 20/20 (100.00%)
+- title: 1/20 (5.00%)
+- brand: 1/20 (5.00%)

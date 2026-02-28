@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EarbudsProductRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "query",
+    "source",
+    "title",
+    "brand",
+    "price",
+    "url",
+    "rating",
+    "review_count",
+    "key_specs"
+  ],
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Search keyword used for collection."
+    },
+    "source": {
+      "type": "string",
+      "description": "Data source identifier, e.g. amazon or bestbuy."
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "brand": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "price": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "rating": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "review_count": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "key_specs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 5,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

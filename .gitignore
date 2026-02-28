@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+Key.md
+*.pem
+*.key
+*.p12
 
 # logs
 logs/
